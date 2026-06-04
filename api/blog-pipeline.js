@@ -5,8 +5,7 @@ export default async function handler(req, res) {
   }
 
   const { keyword } = req.body;
-  // Vercel 설정에 등록된 키를 가져옵니다. (이름은 편리하게 그대로 두셔도 됩니다)
-  const apiKey = process.env.OPENAI_API_KEY; 
+  const apiKey = process.env.OPENAI_API_KEY; // Vercel에 AIza... 키가 들어있는 변수명
 
   if (!keyword) {
     return res.status(400).json({ error: '키워드를 입력해주세요.' });
@@ -17,8 +16,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 구글 AI 스튜디오 Gemini 1.5 Flash 모델 호출 주소입니다.
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // [수정] v1 정식 버전 주소와 gemini-1.5-flash-latest 모델명으로 매핑했습니다.
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -40,12 +39,10 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // 구글 API 에러 예외 처리
     if (data.error) {
       return res.status(500).json({ success: false, error: `구글 Gemini 에러: ${data.error.message}` });
     }
 
-    // Gemini의 답변 구조에서 텍스트 추출
     if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
       const finalHtml = data.candidates[0].content.parts[0].text;
       return res.status(200).json({ success: true, result: finalHtml });
