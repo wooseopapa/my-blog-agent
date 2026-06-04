@@ -16,8 +16,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    // [핵심 수정] 가장 안정적이고 표준적인 gemini-1.5-flash 호출 주소로 변경했습니다.
-    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // [완벽 수정] 구글 공식 문서에서 제공하는 가장 확실한 v1beta 엔드포인트 주소 형식입니다.
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
       method: 'POST',
