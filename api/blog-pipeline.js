@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   }
 
   const { keyword } = req.body;
-  const apiKey = process.env.OPENAI_API_KEY; // Vercel에 AIza... 키가 들어있는 변수명
+  const apiKey = process.env.OPENAI_API_KEY;
 
   if (!keyword) {
     return res.status(400).json({ error: '키워드를 입력해주세요.' });
@@ -16,7 +16,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // [수정] v1 정식 버전 주소와 gemini-1.5-flash-latest 모델명으로 매핑했습니다.
     const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
@@ -39,8 +38,10 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
+    // [수정] 구글 에러 객체가 [object Object]로 뭉개지지 않도록 확실하게 텍스트만 뽑아냅니다.
     if (data.error) {
-      return res.status(500).json({ success: false, error: `구글 Gemini 에러: ${data.error.message}` });
+      const errorMsg = typeof data.error === 'object' ? (data.error.message || JSON.stringify(data.error)) : data.error;
+      return res.status(500).json({ success: false, error: `구글 Gemini 에러: ${errorMsg}` });
     }
 
     if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0]) {
