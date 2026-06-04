@@ -16,8 +16,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    // [완벽 해결] 구글 API 주소에서 models/ 형식을 완벽하게 매칭한 정석 주소입니다.
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // [긴급 수정] 최근 구글 AI 스튜디오에서 지원 중단된 1.5 모델 대신, 
+    // 현재 가장 안정적이고 공식 지원되는 v1beta의 gemini-2.5-flash 또는 gemini-3.5-flash 계열로 호출 주소를 전면 교체했습니다.
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -48,6 +49,7 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
+    // 구글 서버 에러 메시지 상세화
     if (data.error) {
       const errorMsg = typeof data.error === 'object' ? (data.error.message || JSON.stringify(data.error)) : data.error;
       return res.status(500).json({ success: false, error: `구글 Gemini 에러: ${errorMsg}` });
