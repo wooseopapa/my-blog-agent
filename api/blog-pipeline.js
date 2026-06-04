@@ -16,7 +16,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+    // [핵심 수정] 가장 안정적이고 표준적인 gemini-1.5-flash 호출 주소로 변경했습니다.
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -38,7 +39,6 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // [수정] 구글 에러 객체가 [object Object]로 뭉개지지 않도록 확실하게 텍스트만 뽑아냅니다.
     if (data.error) {
       const errorMsg = typeof data.error === 'object' ? (data.error.message || JSON.stringify(data.error)) : data.error;
       return res.status(500).json({ success: false, error: `구글 Gemini 에러: ${errorMsg}` });
